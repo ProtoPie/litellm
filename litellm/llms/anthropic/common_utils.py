@@ -333,6 +333,7 @@ class AnthropicModelInfo(BaseLLMModelInfo):
         user_anthropic_beta_headers: Optional[List[str]] = None,
         code_execution_tool_used: bool = False,
         container_with_skills_used: bool = False,
+        use_oauth_token: bool = False,  # NEW: Support for Claude Code OAuth tokens
     ) -> dict:
         betas = set()
         # Anthropic no longer requires the prompt-caching beta header
@@ -366,12 +367,28 @@ class AnthropicModelInfo(BaseLLMModelInfo):
         if container_with_skills_used:
             betas.add("skills-2025-10-02")
 
+        # Check if this is an OAuth token (Claude Code OAuth tokens start with sk-ant-oat01-)
+        is_oauth = api_key.startswith("sk-ant-oat01-") if api_key else False
+
         headers = {
             "anthropic-version": anthropic_version or "2023-06-01",
-            "x-api-key": api_key,
             "accept": "application/json",
             "content-type": "application/json",
         }
+
+        # Use Authorization: Bearer for OAuth tokens, x-api-key for regular API keys
+        if is_oauth or use_oauth_token:
+            headers["Authorization"] = f"Bearer {api_key}"
+            # Claude Code OAuth requires these additional headers
+            headers["anthropic-dangerous-direct-browser-access"] = "true"
+            headers["x-app"] = "cli"
+            headers["User-Agent"] = "claude-cli/2.0.60 (external, cli)"
+            # Add OAuth beta header
+            betas.add("oauth-2025-04-20")
+            betas.add("claude-code-20250219")
+            betas.add("interleaved-thinking-2025-05-14")
+        else:
+            headers["x-api-key"] = api_key
 
         if user_anthropic_beta_headers is not None:
             betas.update(user_anthropic_beta_headers)
