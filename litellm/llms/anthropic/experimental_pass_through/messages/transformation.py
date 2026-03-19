@@ -81,8 +81,25 @@ class AnthropicMessagesConfig(BaseAnthropicMessagesConfig):
         if api_key is None:
             api_key = os.getenv("ANTHROPIC_API_KEY")
 
-        if "x-api-key" not in headers and api_key:
-            headers["x-api-key"] = api_key
+        # OAuth tokens (sk-ant-oat01-*) use Authorization: Bearer, not x-api-key
+        if api_key:
+            from litellm.types.llms.anthropic import ANTHROPIC_OAUTH_TOKEN_PREFIX
+            is_oauth = api_key.startswith(ANTHROPIC_OAUTH_TOKEN_PREFIX)
+            if is_oauth:
+                headers["Authorization"] = f"Bearer {api_key}"
+                headers["anthropic-dangerous-direct-browser-access"] = "true"
+                headers["x-app"] = "cli"
+                headers["User-Agent"] = "claude-cli/2.0.60 (external, cli)"
+                # Add OAuth beta headers
+                existing_beta = headers.get("anthropic-beta", "")
+                oauth_betas = {"oauth-2025-04-20", "claude-code-20250219", "interleaved-thinking-2025-05-14"}
+                if existing_beta:
+                    all_betas = set(existing_beta.split(",")) | oauth_betas
+                else:
+                    all_betas = oauth_betas
+                headers["anthropic-beta"] = ",".join(all_betas)
+            elif "x-api-key" not in headers:
+                headers["x-api-key"] = api_key
         if "anthropic-version" not in headers:
             headers["anthropic-version"] = DEFAULT_ANTHROPIC_API_VERSION
         if "content-type" not in headers:
