@@ -100,7 +100,8 @@ def langfuse_client_init(
         ),  # flush interval in seconds
     }
 
-    if Version(langfuse.version.__version__) >= Version("2.6.0"):
+    # sdk_integration was added in 2.6.0 but removed in 3.0.0
+    if Version(langfuse.version.__version__) >= Version("2.6.0") and Version(langfuse.version.__version__) < Version("3.0.0"):
         parameters["sdk_integration"] = "litellm"
 
     client = Langfuse(**parameters)

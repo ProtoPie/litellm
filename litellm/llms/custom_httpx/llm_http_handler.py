@@ -1840,11 +1840,16 @@ class BaseLLMHTTPHandler:
             api_base=api_base,
         )
 
+        # Preserve metadata from @client decorator's function_setup() call
+        # (contains Langfuse keys like session_id, trace_name, user_api_key_end_user_id)
+        _existing_metadata = getattr(logging_obj, "litellm_params", {}).get("metadata", {}) or {}
+        _new_metadata = kwargs.get("metadata", {}) or {}
+        _merged_metadata = {**_existing_metadata, **_new_metadata}
         logging_obj.update_environment_variables(
             model=model,
             optional_params=dict(anthropic_messages_optional_request_params),
             litellm_params={
-                "metadata": kwargs.get("metadata", {}),
+                "metadata": _merged_metadata,
                 "preset_cache_key": None,
                 "stream_response": {},
                 **anthropic_messages_optional_request_params,
