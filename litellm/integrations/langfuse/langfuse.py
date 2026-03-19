@@ -143,7 +143,8 @@ class LangFuseLogger:
         }
         self.langfuse_sdk_version: str = langfuse.version.__version__
 
-        if Version(self.langfuse_sdk_version) >= Version("2.6.0"):
+        # sdk_integration was added in 2.6.0 but removed in 3.0.0
+        if Version(self.langfuse_sdk_version) >= Version("2.6.0") and Version(self.langfuse_sdk_version) < Version("3.0.0"):
             parameters["sdk_integration"] = "litellm"
         self.Langfuse: Langfuse = self.safe_init_langfuse_client(parameters)
 
@@ -288,6 +289,11 @@ class LangFuseLogger:
             optional_params = safe_deep_copy(kwargs.get("optional_params", {}))
 
             prompt = {"messages": kwargs.get("messages")}
+
+            # Capture system prompt for Anthropic native messages API
+            system_prompt = kwargs.get("system") or optional_params.get("system")
+            if system_prompt is not None:
+                prompt["system"] = system_prompt
 
             functions = optional_params.pop("functions", None)
             tools = optional_params.pop("tools", None)
