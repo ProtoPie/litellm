@@ -21,6 +21,7 @@ from litellm.types.router import GenericLiteLLMParams
 from ...common_utils import (
     AnthropicError,
     AnthropicModelInfo,
+    is_anthropic_oauth_key,
     optionally_handle_anthropic_oauth,
     strip_advisor_blocks_from_messages,
 )
@@ -154,6 +155,24 @@ class AnthropicMessagesConfig(BaseAnthropicMessagesConfig):
             auth_header = AnthropicModelInfo.get_auth_header(api_key)
             if auth_header is not None:
                 headers.update(auth_header)
+
+        # Claude Code OAuth requires extra impersonation headers + betas beyond
+        # what optionally_handle_anthropic_oauth() sets. Add them when an OAuth
+        # token is in play.
+        if api_key and is_anthropic_oauth_key(api_key):
+            headers["x-app"] = "cli"
+            headers["User-Agent"] = "claude-cli/2.0.60 (external, cli)"
+            existing_beta = headers.get("anthropic-beta", "")
+            oauth_betas = {
+                "oauth-2025-04-20",
+                "claude-code-20250219",
+                "interleaved-thinking-2025-05-14",
+            }
+            if existing_beta:
+                all_betas = {b.strip() for b in existing_beta.split(",") if b.strip()} | oauth_betas
+            else:
+                all_betas = oauth_betas
+            headers["anthropic-beta"] = ",".join(sorted(all_betas))
         if "anthropic-version" not in headers:
             headers["anthropic-version"] = DEFAULT_ANTHROPIC_API_VERSION
         if "content-type" not in headers:

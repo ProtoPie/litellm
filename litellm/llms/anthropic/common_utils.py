@@ -548,6 +548,7 @@ class AnthropicModelInfo(BaseLLMModelInfo):
             pdf_used=pdf_used,
             api_key=api_key,
             auth_token=auth_token,
+            anthropic_version=headers.get("anthropic-version"),
             file_id_used=file_id_used,
             web_search_tool_used=web_search_tool_used,
             is_vertex_request=optional_params.get("is_vertex_request", False),
