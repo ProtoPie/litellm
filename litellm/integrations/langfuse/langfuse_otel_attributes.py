@@ -87,6 +87,12 @@ class LangfuseLLMObsOTELAttributes(BaseLLMObsOTELAttributes):
     @override
     def set_messages(span: "Span", kwargs: Dict[str, Any]):
         prompt = {"messages": kwargs.get("messages")}
+
+        # Capture system prompt for Anthropic native messages API
+        system_prompt = kwargs.get("system") or kwargs.get("optional_params", {}).get("system")
+        if system_prompt is not None:
+            prompt["system"] = system_prompt
+
         optional_params = kwargs.get("optional_params", {})
         functions = optional_params.get("functions")
         tools = optional_params.get("tools")
