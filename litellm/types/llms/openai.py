@@ -784,11 +784,7 @@ ValidUserMessageContentTypes = [
     "guarded_text",
     "video_url",
     "file",
-    # Anthropic-native content types (for passthrough proxy use)
-    "tool_result",
-    "tool_use",
-    "image",
-]  # used for validating user messages.
+]  # used for validating user messages. Prevent users from accidentally sending anthropic messages.
 
 # Assistant message content types (text, thinking, redacted_thinking)
 ValidAssistantMessageContentTypesLiteral = Literal[

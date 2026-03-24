@@ -2018,26 +2018,6 @@ def anthropic_process_openai_file_message(
     )
 
 
-def _is_anthropic_native_format(messages: List) -> bool:
-    """Detect if messages are already in Anthropic native format.
-
-    Anthropic-native messages have tool_result content blocks inside user messages.
-    OpenAI format uses separate role="tool" messages instead, so the presence of
-    tool_result in user content is a reliable indicator of Anthropic format.
-    """
-    for msg in messages:
-        if not isinstance(msg, dict):
-            continue
-        if msg.get("role") != "user":
-            continue
-        content = msg.get("content")
-        if isinstance(content, list):
-            for block in content:
-                if isinstance(block, dict) and block.get("type") == "tool_result":
-                    return True
-    return False
-
-
 def anthropic_messages_pt(  # noqa: PLR0915
     messages: List[AllMessageValues],
     model: str,
@@ -2057,16 +2037,6 @@ def anthropic_messages_pt(  # noqa: PLR0915
     5. System messages are a separate param to the Messages API
     6. Ensure we only accept role, content. (message.name is not supported)
     """
-    # Passthrough: if messages are already in Anthropic native format, return as-is.
-    # Detected by the presence of tool_result content blocks in user messages,
-    # which only exist in Anthropic format (OpenAI uses role="tool" instead).
-    if _is_anthropic_native_format(messages):
-        return [
-            {"role": msg["role"], "content": msg["content"]}
-            for msg in messages
-            if isinstance(msg, dict) and msg.get("role") in ("user", "assistant")
-        ]
-
     # add role=tool support to allow function call result/error submission
     user_message_types = {"user", "tool", "function"}
     # reformat messages to ensure user/assistant are alternating, if there's either 2 consecutive 'user' messages or 2 consecutive 'assistant' message, merge them.
