@@ -162,7 +162,10 @@ class AnthropicMessagesConfig(BaseAnthropicMessagesConfig):
             raise AnthropicError(
                 message=raw_response.text, status_code=raw_response.status_code
             )
-        return AnthropicMessagesResponse(**raw_response_json)
+        response = AnthropicMessagesResponse(**raw_response_json)
+        # Inject HTTP response headers for downstream rate-limit / utilization tracking
+        response["_response_headers"] = dict(raw_response.headers)  # type: ignore[typeddict-unknown-key]
+        return response
 
     def get_async_streaming_response_iterator(
         self,
