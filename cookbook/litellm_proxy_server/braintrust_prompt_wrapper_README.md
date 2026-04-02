@@ -69,7 +69,7 @@ The server will start on `http://localhost:8080` by default.
 
 You can customize the port and host:
 ```bash
-export PORT=8000
+export PORT=1455
 export HOST=0.0.0.0
 python braintrust_prompt_wrapper_server.py
 ```
