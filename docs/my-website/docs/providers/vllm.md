@@ -160,7 +160,7 @@ Here's how to call an OpenAI-Compatible Endpoint with the LiteLLM Proxy Server
 from litellm import embedding   
 import os
 
-os.environ["HOSTED_VLLM_API_BASE"] = "http://localhost:8000"
+os.environ["HOSTED_VLLM_API_BASE"] = "http://localhost:1455"
 
 
 embedding = embedding(model="hosted_vllm/facebook/opt-125m", input=["Hello world"])
@@ -212,7 +212,7 @@ curl -L -X POST 'http://0.0.0.0:4000/embeddings' \
 from litellm import rerank
 import os
 
-os.environ["HOSTED_VLLM_API_BASE"] = "http://localhost:8000"
+os.environ["HOSTED_VLLM_API_BASE"] = "http://localhost:1455"
 os.environ["HOSTED_VLLM_API_KEY"] = ""  # [optional], if your VLLM server requires an API key
 
 query = "What is the capital of the United States?"
@@ -238,7 +238,7 @@ print(response)
 from litellm import arerank
 import os, asyncio
 
-os.environ["HOSTED_VLLM_API_BASE"] = "http://localhost:8000"
+os.environ["HOSTED_VLLM_API_BASE"] = "http://localhost:1455"
 os.environ["HOSTED_VLLM_API_KEY"] = ""  # [optional], if your VLLM server requires an API key
 
 async def test_async_rerank(): 

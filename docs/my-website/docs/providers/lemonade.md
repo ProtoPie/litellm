@@ -177,7 +177,7 @@ Lemonade automatically validates available models by querying the `/models` endp
 ```python
 import httpx
 
-api_base = "http://localhost:8000"  # or your custom base
+api_base = "http://localhost:1455"  # or your custom base
 response = httpx.get(f"{api_base}/api/v1/models")
 models = response.json()
 print("Available models:", [model['id'] for model in models.get('data', [])])

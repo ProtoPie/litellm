@@ -153,7 +153,7 @@ asyncio.run(run_vllm_batch())
 
 ```bash
 # Set vLLM server endpoint
-export HOSTED_VLLM_API_BASE="http://localhost:8000"
+export HOSTED_VLLM_API_BASE="http://localhost:1455"
 
 # Optional: API key if your vLLM server requires authentication
 export HOSTED_VLLM_API_KEY="your-api-key"
