@@ -9,7 +9,7 @@ class ModelGroupsManagementClient:
         Initialize the ModelGroupsManagementClient.
 
         Args:
-            base_url (str): The base URL of the LiteLLM proxy server (e.g., "http://localhost:8000")
+            base_url (str): The base URL of the LiteLLM proxy server (e.g., "http://localhost:1455")
             api_key (Optional[str]): API key for authentication. If provided, it will be sent as a Bearer token.
         """
         self._base_url = base_url.rstrip("/")  # Remove trailing slash if present
