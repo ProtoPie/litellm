@@ -90,7 +90,7 @@ def make_openai_completion(question):
                 },
             ],
         }
-        response = requests.post("http://0.0.0.0:8000/queue/request", json=data)
+        response = requests.post("http://0.0.0.0:1455/queue/request", json=data)
         response = response.json()
         end_time = time.time()
         # Log the request details
@@ -103,7 +103,7 @@ def make_openai_completion(question):
         while True:
             try:
                 url = response["url"]
-                polling_url = f"http://0.0.0.0:8000{url}"
+                polling_url = f"http://0.0.0.0:1455{url}"
                 polling_response = requests.get(polling_url)
                 polling_response = polling_response.json()
                 print("\n RESPONSE FROM POLLING JoB", polling_response)

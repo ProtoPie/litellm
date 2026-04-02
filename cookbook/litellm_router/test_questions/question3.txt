@@ -8,7 +8,7 @@ View all the supported args for the Proxy CLI here
 
 $ litellm --model huggingface/bigcode/starcoder
 
-#INFO: Proxy running on http://0.0.0.0:8000
+#INFO: Proxy running on http://0.0.0.0:1455
 
 Test
 In a new shell, run, this will make an openai.ChatCompletion request
@@ -20,7 +20,7 @@ This will now automatically route any requests for gpt-3.5-turbo to bigcode star
 Replace openai base
 import openai 
 
-openai.api_base = "http://0.0.0.0:8000"
+openai.api_base = "http://0.0.0.0:1455"
 
 print(openai.chat.completions.create(model="test", messages=[{"role":"user", "content":"Hey!"}]))
 
