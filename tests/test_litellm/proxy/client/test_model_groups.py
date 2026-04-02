@@ -17,7 +17,7 @@ from litellm.proxy.client.exceptions import UnauthorizedError
 
 @pytest.fixture
 def base_url():
-    return "http://localhost:8000"
+    return "http://localhost:1455"
 
 
 @pytest.fixture
@@ -61,7 +61,7 @@ def test_info_request_no_auth(base_url):
 @pytest.mark.parametrize(
     "base_url,expected",
     [
-        ("http://localhost:8000", "http://localhost:8000/model_group/info"),
+        ("http://localhost:1455", "http://localhost:8000/model_group/info"),
         (
             "http://localhost:8000/",
             "http://localhost:8000/model_group/info",
@@ -158,7 +158,7 @@ def test_info_invalid_api_keys(base_url, api_key):
 def test_client_initialization_strips_trailing_slash():
     """Test that the client properly strips trailing slashes from base_url during initialization"""
     client = ModelGroupsManagementClient(base_url="http://localhost:8000/////")
-    assert client._base_url == "http://localhost:8000"
+    assert client._base_url == "http://localhost:1455"
 
 
 def test_client_initialization(base_url, api_key):

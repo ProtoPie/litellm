@@ -18,7 +18,7 @@ from litellm.proxy.client.exceptions import NotFoundError, UnauthorizedError
 
 @pytest.fixture
 def base_url():
-    return "http://localhost:8000"
+    return "http://localhost:1455"
 
 
 @pytest.fixture
@@ -62,7 +62,7 @@ def test_list_request_no_auth(base_url):
 @pytest.mark.parametrize(
     "base_url,expected",
     [
-        ("http://localhost:8000", "http://localhost:8000/models"),
+        ("http://localhost:1455", "http://localhost:8000/models"),
         (
             "http://localhost:8000/",
             "http://localhost:8000/models",
@@ -147,7 +147,7 @@ def test_list_invalid_api_keys(base_url, api_key):
 def test_client_initialization_strips_trailing_slash():
     """Test that the client properly strips trailing slashes from base_url during initialization"""
     client = ModelsManagementClient(base_url="http://localhost:8000/////")
-    assert client._base_url == "http://localhost:8000"
+    assert client._base_url == "http://localhost:1455"
 
 
 def test_client_initialization(base_url, api_key):
@@ -169,8 +169,8 @@ def test_client_initialization_strips_trailing_slash():
     base_url = "http://localhost:8000/////"
     client = Client(base_url=base_url)
 
-    assert client._base_url == "http://localhost:8000"
-    assert client.models._base_url == "http://localhost:8000"
+    assert client._base_url == "http://localhost:1455"
+    assert client.models._base_url == "http://localhost:1455"
 
 
 def test_client_without_api_key(base_url):
@@ -470,7 +470,7 @@ def test_get_by_name_request_creation(client, base_url):
 
 def test_get_invalid_params():
     """Test that get raises ValueError for invalid parameter combinations"""
-    client = ModelsManagementClient(base_url="http://localhost:8000")
+    client = ModelsManagementClient(base_url="http://localhost:1455")
 
     # Test with no parameters
     with pytest.raises(ValueError) as exc_info:
