@@ -146,7 +146,7 @@ See [Supported Parameters](../completion/input.md#translated-openai-params) for 
 from litellm import embedding
 import os 
 
-os.environ['LM_STUDIO_API_BASE'] = "http://localhost:8000"
+os.environ['LM_STUDIO_API_BASE'] = "http://localhost:1455"
 response = embedding(
     model="lm_studio/jina-embeddings-v3",
     input=["Hello world"],
