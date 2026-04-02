@@ -431,7 +431,7 @@ In the [config.py](https://continue.dev/docs/reference/Models/openai) set this a
       api_key="IGNORED",
       model="fake-model-name",
       context_length=2048, # customize if needed for your model
-      api_base="http://localhost:8000" # your proxy server url
+      api_base="http://localhost:1455" # your proxy server url
   ),
 ```
 
@@ -456,7 +456,7 @@ from autogen import AssistantAgent, UserProxyAgent, oai
 config_list=[
     {
         "model": "my-fake-model",
-        "api_base": "http://localhost:8000",  #litellm compatible endpoint
+        "api_base": "http://localhost:1455",  #litellm compatible endpoint
         "api_type": "open_ai",
         "api_key": "NULL", # just a placeholder
     }
@@ -485,7 +485,7 @@ from autogen.agentchat import GroupChat
 config_list = [
     {
         "model": "ollama/mistralorca",
-        "api_base": "http://localhost:8000",  # litellm compatible endpoint
+        "api_base": "http://localhost:1455",  # litellm compatible endpoint
         "api_type": "open_ai",
         "api_key": "NULL",  # just a placeholder
     }
@@ -495,7 +495,7 @@ llm_config = {"config_list": config_list, "seed": 42}
 code_config_list = [
     {
         "model": "ollama/phind-code",
-        "api_base": "http://localhost:8000",  # litellm compatible endpoint
+        "api_base": "http://localhost:1455",  # litellm compatible endpoint
         "api_type": "open_ai",
         "api_key": "NULL",  # just a placeholder
     }
