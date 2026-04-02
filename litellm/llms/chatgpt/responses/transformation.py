@@ -38,34 +38,41 @@ class ChatGPTResponsesAPIConfig(OpenAIResponsesAPIConfig):
 
     def validate_environment(
         self,
-        headers: dict,
+        headers: dict[str, str],
         model: str,
         litellm_params: Optional[GenericLiteLLMParams],
-    ) -> dict:
-        try:
-            access_token = self.authenticator.get_access_token()
-        except GetAccessTokenError as e:
-            raise AuthenticationError(
-                model=model,
-                llm_provider="chatgpt",
-                message=str(e),
-            )
+    ) -> dict[str, str]:
+        authorization_header = headers.get("Authorization") or headers.get("authorization")
+        access_token = None
+        if isinstance(authorization_header, str) and authorization_header.lower().startswith("bearer "):
+            access_token = authorization_header.split(" ", 1)[1].strip()
 
-        account_id = self.authenticator.get_account_id()
+        if not access_token:
+            try:
+                access_token = self.authenticator.get_access_token()
+            except GetAccessTokenError as e:
+                raise AuthenticationError(
+                    model=model,
+                    llm_provider="chatgpt",
+                    message=str(e),
+                )
+
+        account_id = headers.get("ChatGPT-Account-Id") or headers.get("chatgpt-account-id")
+        if not account_id:
+            account_id = self.authenticator.get_account_id()
+
         session_id = ensure_chatgpt_session_id(litellm_params)
-        default_headers = get_chatgpt_default_headers(
-            access_token, account_id, session_id
-        )
+        default_headers = get_chatgpt_default_headers(access_token, account_id, session_id)
         return {**default_headers, **headers}
 
     def transform_responses_api_request(
         self,
         model: str,
         input: Any,
-        response_api_optional_request_params: dict,
+        response_api_optional_request_params: dict[str, Any],
         litellm_params: GenericLiteLLMParams,
-        headers: dict,
-    ) -> dict:
+        headers: dict[str, str],
+    ) -> dict[str, Any]:
         request = super().transform_responses_api_request(
             model,
             input,
@@ -81,9 +88,7 @@ class ChatGPTResponsesAPIConfig(OpenAIResponsesAPIConfig):
         existing_instructions = request.get("instructions")
         if existing_instructions:
             if base_instructions not in existing_instructions:
-                request["instructions"] = (
-                    f"{base_instructions}\n\n{existing_instructions}"
-                )
+                request["instructions"] = f"{base_instructions}\n\n{existing_instructions}"
         else:
             request["instructions"] = base_instructions
         request["store"] = False
@@ -144,23 +149,17 @@ class ChatGPTResponsesAPIConfig(OpenAIResponsesAPIConfig):
                 if isinstance(response_payload, dict):
                     response_payload = dict(response_payload)
                     if "created_at" in response_payload:
-                        response_payload["created_at"] = _safe_convert_created_field(
-                            response_payload["created_at"]
-                        )
+                        response_payload["created_at"] = _safe_convert_created_field(response_payload["created_at"])
                     try:
                         completed_response = ResponsesAPIResponse(**response_payload)
                     except Exception:
-                        completed_response = ResponsesAPIResponse.model_construct(
-                            **response_payload
-                        )
+                        completed_response = ResponsesAPIResponse.model_construct(**response_payload)
                 break
             if event_type in (
                 ResponsesAPIStreamEvents.RESPONSE_FAILED,
                 ResponsesAPIStreamEvents.ERROR,
             ):
-                error_obj = parsed_chunk.get("error") or (
-                    parsed_chunk.get("response") or {}
-                ).get("error")
+                error_obj = parsed_chunk.get("error") or (parsed_chunk.get("response") or {}).get("error")
                 if error_obj is not None:
                     if isinstance(error_obj, dict):
                         error_message = error_obj.get("message") or str(error_obj)
@@ -184,7 +183,7 @@ class ChatGPTResponsesAPIConfig(OpenAIResponsesAPIConfig):
     def get_complete_url(
         self,
         api_base: Optional[str],
-        litellm_params: dict,
+        litellm_params: dict[str, Any],
     ) -> str:
         api_base = api_base or self.authenticator.get_api_base() or CHATGPT_API_BASE
         api_base = api_base.rstrip("/")
