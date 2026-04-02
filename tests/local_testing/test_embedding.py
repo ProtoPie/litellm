@@ -1024,7 +1024,7 @@ async def test_hf_embedddings_with_optional_params(sync_mode):
 
 
 def test_hosted_vllm_embedding(monkeypatch):
-    monkeypatch.setenv("HOSTED_VLLM_API_BASE", "http://localhost:8000")
+    monkeypatch.setenv("HOSTED_VLLM_API_BASE", "http://localhost:1455")
     from litellm.llms.custom_httpx.http_handler import HTTPHandler
 
     client = HTTPHandler()
@@ -1070,7 +1070,7 @@ def test_llamafile_embedding(monkeypatch):
 @pytest.mark.asyncio
 @pytest.mark.parametrize("sync_mode", [True, False])
 async def test_lm_studio_embedding(monkeypatch, sync_mode):
-    monkeypatch.setenv("LM_STUDIO_API_BASE", "http://localhost:8000")
+    monkeypatch.setenv("LM_STUDIO_API_BASE", "http://localhost:1455")
     from litellm.llms.custom_httpx.http_handler import HTTPHandler, AsyncHTTPHandler
 
     client = HTTPHandler() if sync_mode else AsyncHTTPHandler()

@@ -259,7 +259,7 @@ def test_get_litellm_proxy_custom_llm_provider():
     Tests force_use_litellm_proxy uses LITELLM_PROXY_API_BASE and LITELLM_PROXY_API_KEY from env.
     """
     test_model = "gpt-3.5-turbo"
-    expected_api_base = "http://localhost:8000"
+    expected_api_base = "http://localhost:1455"
     expected_api_key = "test_proxy_key"
 
     with patch.dict(os.environ, {

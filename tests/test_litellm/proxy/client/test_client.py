@@ -14,7 +14,7 @@ from litellm.proxy.client.keys import KeysManagementClient
 
 @pytest.fixture
 def base_url():
-    return "http://localhost:8000"
+    return "http://localhost:1455"
 
 
 @pytest.fixture
@@ -56,11 +56,11 @@ def test_client_initialization_strips_trailing_slash():
     base_url = "http://localhost:8000/////"
     client = Client(base_url=base_url)
 
-    assert client._base_url == "http://localhost:8000"
-    assert client.models._base_url == "http://localhost:8000"
-    assert client.chat._base_url == "http://localhost:8000"
-    assert client.keys._base_url == "http://localhost:8000"
-    assert client.http._base_url == "http://localhost:8000"
+    assert client._base_url == "http://localhost:1455"
+    assert client.models._base_url == "http://localhost:1455"
+    assert client.chat._base_url == "http://localhost:1455"
+    assert client.keys._base_url == "http://localhost:1455"
+    assert client.http._base_url == "http://localhost:1455"
 
 
 def test_client_without_api_key(base_url):
