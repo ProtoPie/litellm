@@ -1,6 +1,7 @@
 import base64
 import json
 import os
+import sys
 import time
 from typing import Any, Dict, Optional
 
@@ -149,6 +150,16 @@ class Authenticator:
         return None
 
     def _login_device_code(self) -> Dict[str, str]:
+        if not sys.stdin.isatty():
+            raise GetAccessTokenError(
+                message=(
+                    "ChatGPT device-code login is not available in "
+                    "non-interactive environments. "
+                    "Register a Codex token via the admin dashboard instead."
+                ),
+                status_code=401,
+            )
+
         cooldown_remaining = self._get_device_code_cooldown_remaining(
             self._read_auth_file()
         )
